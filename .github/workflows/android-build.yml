@@ -26,7 +26,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Start Android Release Build
-      - run: flutter test
-      - run: flutter build apk
-      - run: flutter build appbundle
+      - name: Start Test
+        run: flutter test
+      - name: Start Android Release Build APK
+        run: flutter build apk
+      - name: Start Android Release Build AppBundle
+        run: flutter build appbundle
