@@ -29,3 +29,23 @@ jobs:
         run: flutter build apk
       - name: Start Android Release Build AppBundle
         run: flutter build appbundle
+      - name: Copy APK and AppBundle to directory
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk build/android/
+          cp build/app/outputs/flutter-appbundle/app-release.aab build/android/
+
+      # Step to commit the generated APK and AppBundle
+      - name: Commit APK and AppBundle
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add build/android/.
+          git commit -m "Add APK and AppBundle for release [skip ci]"
+
+      # Step to create a tag for the release
+      - name: Create Release Tag
+        run: |
+          TAG=$(git describe --tags --abbrev=0)
+          NEW_TAG="v${TAG}"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
