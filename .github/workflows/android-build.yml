@@ -1,4 +1,4 @@
-name: Web Build
+name: Android Build
 on:
   push:
     branches:  [ "main" ]
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Create Web Build
+    name: Create Android Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,9 +25,6 @@ jobs:
       
       - name: Get dependencies
         run: flutter pub get
-
-      - name: Start Test
-        run: flutter test
       - name: Start Android Release Build APK
         run: flutter build apk
       - name: Start Android Release Build AppBundle
