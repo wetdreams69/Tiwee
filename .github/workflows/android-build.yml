@@ -32,7 +32,7 @@ jobs:
       - name: Copy APK and AppBundle to directory
         run: |
           cp build/app/outputs/flutter-apk/app-release.apk build/android/
-          cp build/app/outputs/flutter-appbundle/app-release.aab build/android/
+          cp build/app/outputs/bundle/release/app-release.aab build/android/
 
       # Step to commit the generated APK and AppBundle
       - name: Commit APK and AppBundle
