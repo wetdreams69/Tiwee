@@ -58,6 +58,13 @@ jobs:
           git add build/android/.
           git commit -m "Add APK and AppBundle for release [skip ci]"
 
+      # Step to merge changes into the main branch
+      - name: Merge to main
+        run: |
+          git checkout main
+          git merge $GITHUB_SHA  # Merge the latest commit
+          git push origin main
+
       # Step to create a tag for the release
       - name: Create Release Tag
         run: |
