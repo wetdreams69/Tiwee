@@ -47,7 +47,7 @@ jobs:
       # Step to create a tag for the release
       - name: Create Release Tag
         run: |
-          TAG=$(git describe --tags --abbrev=0)
+          TAG=$(git describe --tags --abbrev=0 --always)
           NEW_TAG="v${TAG}"
           git tag $NEW_TAG
           git push origin $NEW_TAG
