@@ -33,8 +33,22 @@ jobs:
         run: flutter build appbundle
       - name: Copy APK and AppBundle to directory
         run: |
-          cp build/app/outputs/flutter-apk/app-release.apk build/android/
-          cp build/app/outputs/bundle/release/app-release.aab build/android/
+          ls -al build/app/outputs/flutter-apk/
+          ls -al build/app/outputs/bundle/release/
+
+          if [ -f build/app/outputs/flutter-apk/app-release.apk ]; then
+            cp build/app/outputs/flutter-apk/app-release.apk build/android/
+            echo "APK copied successfully."
+          else
+            echo "APK file not found."
+          fi
+
+          if [ -f build/app/outputs/bundle/release/app-release.aab ]; then
+            cp build/app/outputs/bundle/release/app-release.aab build/android/
+            echo "AppBundle copied successfully."
+          else
+            echo "AppBundle file not found."
+          fi
 
       # Step to commit the generated APK and AppBundle
       - name: Commit APK and AppBundle
