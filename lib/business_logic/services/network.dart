@@ -6,7 +6,7 @@ Future<List<ChannelObj>?> fetchChannels() async {
 
   try {
     Response response =
-        await Dio().get('https://iptv-org.github.io/api/channels.json');
+        await Dio().get('https://raw.githubusercontent.com/wetdreams69/iptv_argentina/main/playlist.json');
     print("enzo");
     print(response.toString());
     for (var channel in response.data) {
