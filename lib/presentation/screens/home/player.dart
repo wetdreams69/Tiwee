@@ -1,4 +1,4 @@
-import 'package:better_player/better_player.dart';
+import 'package:better_player_enhanced/better_player_enhanced.dart';
 import 'package:flutter/material.dart';
 import 'package:Tiwee/core/consts.dart';
 import 'package:lottie/lottie.dart';
