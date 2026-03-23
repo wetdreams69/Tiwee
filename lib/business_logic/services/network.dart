@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:tiwee/core/consts.dart';
 import 'package:dio/dio.dart';
 import 'package:tiwee/business_logic/model/channel.dart';
@@ -10,7 +11,13 @@ Future<List<ChannelObj>?> fetchChannels() async {
         await Dio().get(kPlaylistUrl);
     print("enzo");
     print(response.toString());
-    for (var channel in response.data) {
+
+    var responseData = response.data;
+    if (responseData is String) {
+      responseData = jsonDecode(responseData);
+    }
+
+    for (var channel in responseData) {
       ChannelObj channelObj = ChannelObj.fromJson(channel);
 
       if (channelObj.categories.isNotEmpty) {
