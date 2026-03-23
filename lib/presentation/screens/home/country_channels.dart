@@ -1,12 +1,13 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:Tiwee/business_logic/provider/country_provider.dart';
-import 'package:Tiwee/core/consts.dart';
-import 'package:Tiwee/presentation/screens/home/player.dart';
-import 'package:Tiwee/presentation/widgets/main_appbar.dart';
-import 'package:Tiwee/presentation/widgets/tv_card.dart';
+import 'package:tiwee/business_logic/provider/country_provider.dart';
+import 'package:tiwee/core/consts.dart';
+import 'package:tiwee/presentation/screens/home/player.dart';
+import 'package:tiwee/presentation/widgets/main_appbar.dart';
+import 'package:tiwee/presentation/widgets/tv_card.dart';
 
 //
 // final clickedStarProvider = StateProvider<bool>((ref) {
@@ -46,8 +47,9 @@ class CountryChannels extends ConsumerWidget {
               )),
             ),
             error: (error, stackTrace) => Text(error.toString()),
-            loading: () =>  SizedBox(
-                width: 50, child: Lottie.asset(kLoading, width: 60)),
+            loading: () => kIsWeb
+                ? const Center(child: CircularProgressIndicator())
+                : SizedBox(width: 50, child: Lottie.asset(kLoading, width: 60)),
           ),
         ],
       )),

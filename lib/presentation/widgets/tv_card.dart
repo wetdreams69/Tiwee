@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:Tiwee/core/consts.dart';
+import 'package:tiwee/core/consts.dart';
 
 class TvCard extends StatelessWidget {
   const TvCard(
@@ -42,7 +43,10 @@ class TvCard extends StatelessWidget {
 
               placeholder: (context, url) => Center(
                   child: SizedBox(
-                      width: 50, child: Lottie.asset(kLoading, width: 60))),
+                      width: 50,
+                      child: kIsWeb
+                          ? CircularProgressIndicator()
+                          : Lottie.asset(kLoading, width: 60))),
               imageUrl: data[country]![index].logo,
 
 

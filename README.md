@@ -21,3 +21,49 @@ Want to contribute? I would really appreciate a hand with the development to add
 ![Screenshot_2022-02-10-09-42-13-824_com example Tiwee](https://user-images.githubusercontent.com/32876834/153373193-075057b0-f999-4b5a-bf62-76f863568f6a.jpg)
 ![Screenshot_2022-02-10-09-42-46-746_com example Tiwee](https://user-images.githubusercontent.com/32876834/153373204-c698775f-346e-4224-9e12-c84a6217eff6.jpg)
 ![Screenshot_2022-02-10-11-23-14-496_com example Tiwee](https://user-images.githubusercontent.com/32876834/153373209-8b7517c3-15e6-4950-baba-306bace20138.jpg)
+
+## Playlist JSON Format
+
+The app expects a JSON file with a list of channels. You can configure the URL of this JSON using the `PLAYLIST_URL` dart-define (configured in GitHub Secrets for production).
+
+### Example Structure:
+
+```json
+[
+  {
+    "name": "ESPN Argentino",
+    "logo": "https://upload.wikimedia.org/wikipedia/commons/b/bc/ESPN_Arg.png",
+    "url": "https://example.com/live/espn_ar/index.mpd",
+    "categories": [
+      {
+        "name": "Sports",
+        "slug": "sports"
+      }
+    ],
+    "countries": [
+      {
+        "name": "Argentina",
+        "code": "AR"
+      }
+    ],
+    "languages": [
+      {
+        "name": "Spanish",
+        "code": "es"
+      }
+    ],
+    "tvg": {
+      "id": "espn.ar",
+      "name": "ESPN AR",
+      "url": "https://iptv-argentina.org/epg.xml"
+    },
+    "clearkey": {
+      "f3aa10628285498ca760114c047cfa29": "10da95562095034c4f923ab94541249b"
+    }
+  }
+]
+```
+
+*   **clearkey (optional)**: For channels with DASH DRM. Map of `Key ID` : `Key`.
+*   **tvg**: Guide (EPG) data.
+*   **categories/countries/languages**: Used for filtering and categorization within the app.

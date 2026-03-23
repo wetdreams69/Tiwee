@@ -1,6 +1,6 @@
-import 'package:Tiwee/core/consts.dart';
+import 'package:tiwee/core/consts.dart';
 import 'package:dio/dio.dart';
-import 'package:Tiwee/business_logic/model/channel.dart';
+import 'package:tiwee/business_logic/model/channel.dart';
 
 Future<List<ChannelObj>?> fetchChannels() async {
   List<ChannelObj> channels = [];

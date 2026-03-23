@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:lottie/lottie.dart';
-import 'package:Tiwee/business_logic/model/channel.dart';
-import 'package:Tiwee/core/consts.dart';
-import 'package:Tiwee/presentation/screens/home/player.dart';
+import 'package:tiwee/business_logic/model/channel.dart';
+import 'package:tiwee/core/consts.dart';
+import 'package:tiwee/presentation/screens/home/player.dart';
 
 class SortedByCategoryPage extends StatefulWidget {
   const SortedByCategoryPage(
@@ -34,10 +35,12 @@ class _SortedByCategoryPageState extends State<SortedByCategoryPage> {
               ? Center(
                   child: SizedBox(
                       width: size.width / 3,
-                      child: Lottie.asset(
-                        kNotFound,
-                        width: 100,
-                      )))
+                      child: kIsWeb
+                          ? const CircularProgressIndicator()
+                          : Lottie.asset(
+                              kNotFound,
+                              width: 100,
+                            )))
               : Stack(
                   children: [
                     Container(
@@ -81,11 +84,13 @@ class _SortedByCategoryPageState extends State<SortedByCategoryPage> {
                                   ),
                                 ),
 
-                                placeholder: (context, url) => Center(
+                                 placeholder: (context, url) => Center(
                                     child: SizedBox(
                                         width: 50,
-                                        child:
-                                            Lottie.asset(kLoading, width: 60))),
+                                        child: kIsWeb
+                                            ? const CircularProgressIndicator()
+                                            : Lottie.asset(kLoading,
+                                                width: 60))),
                                 imageUrl: widget.channels[currentIndex].logo,
                                 // progressIndicatorBuilder: (context, url, progress) => ProgressIndicator(value: progress.progress,),
                                 fit: BoxFit.cover,
@@ -155,7 +160,10 @@ class _SortedByCategoryPageState extends State<SortedByCategoryPage> {
                                                       ),
                                                       Text(
                                                         widget.channels[index]
-                                                            .languages[0].name,
+                                                                .languages.isNotEmpty
+                                                            ? widget.channels[index]
+                                                                .languages[0].name
+                                                            : "N/A",
                                                         style: TextStyle(
                                                             color: index ==
                                                                     currentIndex

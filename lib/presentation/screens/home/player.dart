@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:better_player_enhanced/better_player.dart';
 import 'package:flutter/material.dart';
-import 'package:Tiwee/core/consts.dart';
+import 'package:tiwee/core/consts.dart';
 import 'package:lottie/lottie.dart';
 
 class Player extends StatefulWidget {

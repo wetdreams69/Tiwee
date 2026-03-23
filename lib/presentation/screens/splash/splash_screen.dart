@@ -1,9 +1,9 @@
 import 'dart:async';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:Tiwee/core/consts.dart';
+import 'package:tiwee/core/consts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:Tiwee/presentation/screens/home/home_page.dart';
+import 'package:tiwee/presentation/screens/home/home_page.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -48,8 +48,10 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Lottie.asset(kSplashLoading,
-                width: width / 4),
+            if (kIsWeb)
+              const CircularProgressIndicator()
+            else
+              Lottie.asset(kSplashLoading, width: width / 4),
             const SizedBox(
               height: 20,
             ),
