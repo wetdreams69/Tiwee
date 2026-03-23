@@ -17,7 +17,7 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '
 
 android {
     namespace "com.example.tiwee"
-    compileSdkVersion 34
+    compileSdk 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -31,7 +31,7 @@ android {
     defaultConfig {
         applicationId "com.example.tiwee"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 34
+        targetSdk 35
         versionCode flutterVersionCode.toInteger()
         multiDexEnabled true
 
@@ -47,6 +47,12 @@ android {
 
 flutter {
     source '../..'
+}
+
+repositories {
+    maven {
+        url "https://storage.googleapis.com/download.flutter.io"
+    }
 }
 
 dependencies {

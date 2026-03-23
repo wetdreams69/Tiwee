@@ -14,6 +14,8 @@ jobs:
   build:
     name: Create Android Build
     runs-on: ubuntu-latest
+    env:
+      FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-x64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,6 +34,11 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+          echo "flutter.sdk=$(which flutter | xargs dirname | xargs dirname)" >> android/local.properties
 
       - name: Get dependencies
         run: flutter pub get
