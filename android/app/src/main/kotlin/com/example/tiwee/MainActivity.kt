@@ -1,4 +1,4 @@
-package com.example.Tiwee
+package com.example.tiwee
 
 import io.flutter.embedding.android.FlutterActivity
 

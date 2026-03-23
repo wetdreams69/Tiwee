@@ -1,74 +1,75 @@
 name: Android Build
+
 on:
   push:
-    branches:  [ "main" ]
-
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
     name: Create Android Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 50
-      - uses: actions/setup-java@v4
+          fetch-depth: 0
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: "17"
-          cache: gradle
-      - uses: subosito/flutter-action@v2
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      
+          cache: true
+
       - name: Get dependencies
         run: flutter pub get
-      - name: Start Android Release Build APK
-        run: flutter build apk
-      - name: Start Android Release Build AppBundle
-        run: flutter build appbundle
-      - name: Copy APK and AppBundle to directory
+
+      - name: Build APK for Release
+        run: flutter build apk --release
+
+      - name: Build AppBundle for Release
+        run: flutter build appbundle --release
+
+      - name: Sync binaries to build/android/
         run: |
-          ls -al build/app/outputs/flutter-apk/
-          ls -al build/app/outputs/bundle/release/
+          mkdir -p build/android
+          cp build/app/outputs/flutter-apk/app-release.apk build/android/
+          cp build/app/outputs/bundle/release/app-release.aab build/android/
 
-          if [ -f build/app/outputs/flutter-apk/app-release.apk ]; then
-            cp build/app/outputs/flutter-apk/app-release.apk build/android/
-            echo "APK copied successfully."
-          else
-            echo "APK file not found."
-          fi
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/android/app-release.apk
 
-          if [ -f build/app/outputs/bundle/release/app-release.aab ]; then
-            cp build/app/outputs/bundle/release/app-release.aab build/android/
-            echo "AppBundle copied successfully."
-          else
-            echo "AppBundle file not found."
-          fi
+      - name: Upload AppBundle as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: build/android/app-release.aab
 
-      # Step to commit the generated APK and AppBundle
-      - name: Commit APK and AppBundle
+      - name: Commit and Push (Main branch only)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add build/android/.
-          git commit -m "Add APK and AppBundle for release [skip ci]"
-
-      # Step to merge changes into the main branch
-      - name: Merge to main
-        run: |
-          git checkout main
-          git merge $GITHUB_SHA  # Merge the latest commit
-          git push origin main
-
-      # Step to create a tag for the release
-      - name: Create Release Tag
-        run: |
-          TAG=$(git describe --tags --abbrev=0 --always)
-          NEW_TAG="v${TAG}"
-          git tag $NEW_TAG
-          git push origin $NEW_TAG
+          git add build/android/
+          # Commit only if there are changes to avoid error
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: update build binaries [skip ci]"
+            git push origin main
+          else
+            echo "No changes in binaries, skipping commit."
+          fi
