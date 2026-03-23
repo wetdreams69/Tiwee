@@ -1,3 +1,4 @@
+import 'package:Tiwee/core/consts.dart';
 import 'package:dio/dio.dart';
 import 'package:Tiwee/business_logic/model/channel.dart';
 
@@ -6,7 +7,7 @@ Future<List<ChannelObj>?> fetchChannels() async {
 
   try {
     Response response =
-        await Dio().get('https://raw.githubusercontent.com/wetdreams69/iptv_argentina/main/playlist.json');
+        await Dio().get(kPlaylistUrl);
     print("enzo");
     print(response.toString());
     for (var channel in response.data) {

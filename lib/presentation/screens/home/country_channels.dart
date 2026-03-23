@@ -41,7 +41,7 @@ class CountryChannels extends ConsumerWidget {
                 crossAxisCount: 4,
 
                 children: List.generate(data[country]!.length, (index) {
-                  return GestureDetector(onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => Player(url: data[country]![index].url),)),child: TvCard(size: size, index: index, data: data, ref: ref, country: country));
+                  return GestureDetector(onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => Player(url: data[country]![index].url, clearKey: data[country]![index].clearkey),)),child: TvCard(size: size, index: index, data: data, ref: ref, country: country));
                 }),
               )),
             ),

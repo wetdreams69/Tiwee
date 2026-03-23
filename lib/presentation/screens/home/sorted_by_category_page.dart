@@ -113,9 +113,10 @@ class _SortedByCategoryPageState extends State<SortedByCategoryPage> {
                                             onTap: () => Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => Player(
-                                                      url: widget
-                                                          .channels[index].url),
+                                                    builder: (context) => Player(
+                                                        url: widget.channels[index].url,
+                                                        clearKey: widget.channels[index].clearkey,
+                                                    ),
                                                 )),
                                             child: Container(
                                                 width: double.infinity,

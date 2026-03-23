@@ -17,6 +17,7 @@ class ChannelObj {
    required this.countries,
    required this.languages,
    required this.tvg,
+    this.clearkey,
   });
 
   String name;
@@ -26,6 +27,7 @@ class ChannelObj {
   List<Country> countries;
   List<Country> languages;
   Tvg tvg;
+  Map<String, String>? clearkey;
 
   factory ChannelObj.fromJson(Map<String, dynamic> json) => ChannelObj(
     name: json["name"]??"",
@@ -35,6 +37,9 @@ class ChannelObj {
     countries: List<Country>.from(json["countries"].map((x) => Country.fromJson(x))),
     languages: List<Country>.from(json["languages"].map((x) => Country.fromJson(x))),
     tvg: Tvg.fromJson(json["tvg"]),
+    clearkey: json["clearkey"] != null 
+        ? Map<String, String>.from(json["clearkey"]) 
+        : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -45,6 +50,7 @@ class ChannelObj {
     "countries": List<dynamic>.from(countries.map((x) => x.toJson())),
     "languages": List<dynamic>.from(languages.map((x) => x.toJson())),
     "tvg": tvg.toJson(),
+    "clearkey": clearkey,
   };
 }
 

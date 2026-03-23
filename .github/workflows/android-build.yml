@@ -44,10 +44,10 @@ jobs:
         run: flutter pub get
 
       - name: Build APK for Release
-        run: flutter build apk --release
+        run: flutter build apk --release --dart-define=PLAYLIST_URL=${{ secrets.PLAYLIST_URL }}
 
       - name: Build AppBundle for Release
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --dart-define=PLAYLIST_URL=${{ secrets.PLAYLIST_URL }}
 
       - name: Sync binaries to build/android/
         run: |

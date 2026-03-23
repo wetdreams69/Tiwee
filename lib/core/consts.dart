@@ -66,6 +66,11 @@ const Map<String, String> kCategoryType = {
       "https://images.unsplash.com/photo-1504275107627-0c2ba7a43dba?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80",
 };
 
+const String kPlaylistUrl = String.fromEnvironment(
+  'PLAYLIST_URL',
+  defaultValue: 'https://raw.githubusercontent.com/wetdreams69/iptv_argentina/main/playlist.json',
+);
+
 const kLoading = ("assets/animation/loading.json");
 const kSplashLoading = ("assets/animation/splash_loading.json");
 const kNotFound = ("assets/animation/not_found.json");

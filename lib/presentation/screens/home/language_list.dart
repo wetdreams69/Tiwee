@@ -23,7 +23,7 @@ class LanguageList extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: GestureDetector(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Player(url:channels[index].url),)),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Player(url:channels[index].url, clearKey: channels[index].clearkey),)),
                 child: Card(
                   child: ListTile(
                     leading: SizedBox(
