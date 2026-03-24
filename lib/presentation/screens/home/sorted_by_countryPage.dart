@@ -91,7 +91,7 @@ class SortedByCountryPage extends ConsumerWidget {
                                       ));
                                 },
                                 child: Column(
-                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,

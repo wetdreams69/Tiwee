@@ -38,6 +38,28 @@ class _PlayerState extends State<Player> {
         ),
       );
 
+      // Función local para convertir HEX a Base64Url (requerimiento de ExoPlayer JWK)
+      String hexToBase64Url(String hex) {
+        List<int> bytes = [];
+        for (int i = 0; i < hex.length; i += 2) {
+          bytes.add(int.parse(hex.substring(i, i + 2), radix: 16));
+        }
+        return base64UrlEncode(bytes).replaceAll('=', '');
+      }
+
+      String? clearKeyJwk;
+      if (widget.clearKey != null) {
+        List<Map<String, String>> jwkKeys = [];
+        widget.clearKey!.forEach((kidHex, keyHex) {
+          jwkKeys.add({
+            "kty": "oct",
+            "kid": hexToBase64Url(kidHex.toString()),
+            "k": hexToBase64Url(keyHex.toString())
+          });
+        });
+        clearKeyJwk = jsonEncode({"keys": jwkKeys, "type": "temporary"});
+      }
+
       // 2. Configuración de la fuente de datos (DASH + DRM)
       BetterPlayerDataSource dataSource = BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
@@ -45,10 +67,10 @@ class _PlayerState extends State<Player> {
         videoFormat: widget.url.contains(".mpd") 
             ? BetterPlayerVideoFormat.dash 
             : BetterPlayerVideoFormat.hls,
-        drmConfiguration: widget.clearKey != null 
+        drmConfiguration: clearKeyJwk != null 
             ? BetterPlayerDrmConfiguration(
                 drmType: BetterPlayerDrmType.clearKey,
-                clearKey: jsonEncode(widget.clearKey),
+                clearKey: clearKeyJwk,
               ) 
             : null,
       );
