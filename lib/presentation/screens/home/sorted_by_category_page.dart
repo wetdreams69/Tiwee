@@ -7,6 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:tiwee/business_logic/model/channel.dart';
 import 'package:tiwee/core/consts.dart';
 import 'package:tiwee/presentation/screens/home/player.dart';
+import 'package:tiwee/presentation/widgets/dpad_focusable.dart';
 
 class SortedByCategoryPage extends StatefulWidget {
   const SortedByCategoryPage(
@@ -114,15 +115,16 @@ class _SortedByCategoryPageState extends State<SortedByCategoryPage> {
                                       child: SlideAnimation(
                                         verticalOffset: 50.0,
                                         child: FadeInAnimation(
-                                          child: GestureDetector(
-                                            onTap: () => Navigator.push(
+                                          child: DpadFocusable(
+                                            onPressed: () => Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) => Player(
                                                         url: widget.channels[index].url,
                                                         clearKey: widget.channels[index].clearkey,
-                                                    ),
-                                                )),
+                                                        channels: widget.channels,
+                                                        initialIndex: index,
+                                                    ))),
                                             child: Container(
                                                 width: double.infinity,
                                                 height: 60,

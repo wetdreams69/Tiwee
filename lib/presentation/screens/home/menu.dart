@@ -12,6 +12,7 @@ import 'package:tiwee/presentation/screens/home/sorted_by_category_page.dart';
 import 'package:tiwee/presentation/screens/home/sorted_by_countryPage.dart';
 import 'package:tiwee/presentation/widgets/home_page_widget/big_card_channel.dart';
 import 'package:tiwee/presentation/widgets/main_appbar.dart';
+import 'package:tiwee/presentation/widgets/dpad_focusable.dart';
 
 class Menu extends ConsumerWidget {
   const Menu({Key? key}) : super(key: key);
@@ -81,8 +82,8 @@ class Menu extends ConsumerWidget {
                             child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10.0, vertical: 10),
-                                child: GestureDetector(
-                                  onTap: () => Navigator.push(
+                                child: DpadFocusable(
+                                  onPressed: () => Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => index == 0

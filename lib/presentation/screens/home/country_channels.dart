@@ -8,6 +8,7 @@ import 'package:tiwee/core/consts.dart';
 import 'package:tiwee/presentation/screens/home/player.dart';
 import 'package:tiwee/presentation/widgets/main_appbar.dart';
 import 'package:tiwee/presentation/widgets/tv_card.dart';
+import 'package:tiwee/presentation/widgets/dpad_focusable.dart';
 
 //
 // final clickedStarProvider = StateProvider<bool>((ref) {
@@ -42,7 +43,10 @@ class CountryChannels extends ConsumerWidget {
                 crossAxisCount: 4,
 
                 children: List.generate(data[country]!.length, (index) {
-                  return GestureDetector(onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => Player(url: data[country]![index].url, clearKey: data[country]![index].clearkey),)),child: TvCard(size: size, index: index, data: data, ref: ref, country: country));
+                  return DpadFocusable(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Player(url: data[country]![index].url, clearKey: data[country]![index].clearkey, channels: data[country]!, initialIndex: index))),
+                    child: TvCard(size: size, index: index, data: data, ref: ref, country: country)
+                  );
                 }),
               )),
             ),
