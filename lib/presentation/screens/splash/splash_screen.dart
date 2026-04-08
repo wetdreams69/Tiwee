@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tiwee/core/consts.dart';
 import 'package:lottie/lottie.dart';
@@ -48,10 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (kIsWeb)
-              const CircularProgressIndicator()
-            else
-              Lottie.asset(kSplashLoading, width: width / 4),
+            Lottie.asset(kSplashLoading, width: width / 4),
             const SizedBox(
               height: 20,
             ),

@@ -1,20 +1,21 @@
 import 'dart:convert';
 import 'package:better_player_enhanced/better_player.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tiwee/core/consts.dart';
 import 'package:tiwee/business_logic/model/channel.dart';
 import 'package:tiwee/business_logic/utils/better_player_track_extension.dart';
+import 'package:dio/dio.dart';
 
 class Player extends StatefulWidget {
-  final String url;
-  final Map<String, String>? clearKey;
-  final List<ChannelObj>? channels;
-  final int? initialIndex;
+  final List<ChannelObj> channels;
+  final int initialIndex;
 
-  const Player({Key? key, required this.url, this.clearKey, this.channels, this.initialIndex})
-      : super(key: key);
+  const Player({
+    Key? key,
+    required this.channels,
+    required this.initialIndex,
+  }) : super(key: key);
 
   @override
   State<Player> createState() => _PlayerState();
@@ -24,6 +25,7 @@ class _PlayerState extends State<Player> {
   BetterPlayerController? _betterPlayerController;
   final FocusNode _focusNode = FocusNode();
   int _currentIndex = 0;
+  int _currentStreamIndex = 0;
   List<ChannelObj> _channels = [];
 
   List<Map<String, dynamic>> _audioTracks = [];
@@ -36,12 +38,12 @@ class _PlayerState extends State<Player> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex ?? 0;
-    _channels = widget.channels ?? [];
-    if (!kIsWeb) _setupPlayer();
+    _currentIndex = widget.initialIndex;
+    _channels = widget.channels;
+    _setupPlayer();
   }
 
-  void _setupPlayer() {
+  void _setupPlayer() async {
     BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
@@ -74,9 +76,20 @@ class _PlayerState extends State<Player> {
 
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController!.addEventsListener(_onPlayerEvent);
-    _betterPlayerController!.setupDataSource(
-      _createDataSource(widget.url, widget.clearKey),
-    );
+
+    if (_channels.isNotEmpty && _currentIndex < _channels.length) {
+      final channel = _channels[_currentIndex];
+      if (channel.streams.isNotEmpty) {
+        final stream = channel.streams[_currentStreamIndex];
+        
+        // Resolvemos redirección para cualquier URL
+        String finalUrl = await _resolveUrl(stream.url, stream.headers);
+
+        _betterPlayerController!.setupDataSource(
+          _createDataSource(finalUrl, stream.clearkey, stream.headers),
+        );
+      }
+    }
 
     // Handler para recibir cues desde Kotlin
     const channel = MethodChannel('com.example.tiwee/tracks');
@@ -93,8 +106,46 @@ class _PlayerState extends State<Player> {
   void _onPlayerEvent(BetterPlayerEvent event) {
     if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
       Future.delayed(const Duration(milliseconds: 500), _loadNativeTracks);
-      // Arrancamos el listener de cues
       _betterPlayerController!.startSubtitleListener();
+    } else if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
+      debugPrint("BetterPlayer Exception: ${event.parameters}");
+      _tryNextStream();
+    }
+  }
+
+  void _tryNextStream() {
+    if (_channels.isEmpty || _currentIndex >= _channels.length) return;
+    final channel = _channels[_currentIndex];
+    
+    if (_currentStreamIndex + 1 < channel.streams.length) {
+      _currentStreamIndex++;
+      final nextStream = channel.streams[_currentStreamIndex];
+      
+      _resolveUrl(nextStream.url, nextStream.headers).then((finalUrl) {
+        // Mostrar aviso al usuario
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error en stream ${_currentStreamIndex}. Intentando fallback..."),
+            backgroundColor: Colors.orangeAccent.withOpacity(0.8),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        debugPrint("Streaming failed. Trying next stream (${_currentStreamIndex}): $finalUrl");
+        
+        _betterPlayerController?.setupDataSource(
+          _createDataSource(finalUrl, nextStream.clearkey, nextStream.headers),
+        );
+      });
+    } else {
+      // Si ya no hay más streams, avisar del error definitivo
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("No se pudo cargar ningún stream para este canal."),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      debugPrint("No more streams available for this channel.");
     }
   }
 
@@ -216,24 +267,39 @@ class _PlayerState extends State<Player> {
   }
 
   BetterPlayerDataSource _createDataSource(
-      String url, Map<String, String>? clearKeyMap) {
+      String url, List<ClearKey>? clearKeyList, Map<String, String>? headers) {
     String? clearKeyJwk;
-    if (clearKeyMap != null) {
+    if (clearKeyList != null && clearKeyList.isNotEmpty) {
       List<Map<String, String>> jwkKeys = [];
-      clearKeyMap.forEach((kidHex, keyHex) {
+      for (var ck in clearKeyList) {
         jwkKeys.add({
           "kty": "oct",
-          "kid": hexToBase64Url(kidHex.toString()),
-          "k": hexToBase64Url(keyHex.toString()),
+          "kid": hexToBase64Url(ck.keyId),
+          "k": hexToBase64Url(ck.key),
         });
-      });
+      }
       clearKeyJwk = jsonEncode({"keys": jwkKeys, "type": "temporary"});
+    }
+
+    Map<String, String> finalHeaders = {
+      "Accept": "*/*",
+      "Access-Control-Allow-Origin": "*",
+    };
+    if (headers != null) {
+      finalHeaders.addAll(headers);
+      if (headers.containsKey("Origin")) {
+        finalHeaders["Referer"] = "${headers["Origin"]}/";
+        if (headers["Origin"]!.contains("flow.com.ar")) {
+          finalHeaders["X-Flow-Origin"] = "portal";
+        }
+      }
     }
 
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       url,
       liveStream: true,
+      headers: finalHeaders,
       videoFormat: url.contains(".mpd")
           ? BetterPlayerVideoFormat.dash
           : BetterPlayerVideoFormat.hls,
@@ -246,26 +312,54 @@ class _PlayerState extends State<Player> {
     );
   }
 
+  Future<String> _resolveUrl(String url, Map<String, String>? headers) async {
+    try {
+      final dio = Dio(BaseOptions(
+        followRedirects: false,
+        validateStatus: (status) => true,
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+        },
+      ));
+
+      final response = await dio.head(url);
+      
+      if (response.statusCode == 302 || response.statusCode == 301) {
+        final location = response.headers.value("location");
+        if (location != null) {
+          return location;
+        }
+      }
+    } catch (e) {
+      debugPrint("Error resolving redirect: $e");
+    }
+    return url;
+  }
+
   void _changeChannel(int newIndex) {
     if (_channels.isEmpty || newIndex < 0 || newIndex >= _channels.length) return;
     setState(() {
       _currentIndex = newIndex;
+      _currentStreamIndex = 0; // Reset stream index for new channel
       // Limpiamos subtítulos al cambiar canal
       _subtitlesActive = false;
       _currentSubtitle = '';
     });
-    if (!kIsWeb) {
-      final channel = _channels[newIndex];
-      _betterPlayerController?.setupDataSource(
-        _createDataSource(channel.url, channel.clearkey),
-      );
+    final channel = _channels[newIndex];
+    if (channel.streams.isNotEmpty) {
+      final stream = channel.streams[0];
+      _resolveUrl(stream.url, stream.headers).then((finalUrl) {
+        _betterPlayerController?.setupDataSource(
+          _createDataSource(finalUrl, stream.clearkey, stream.headers),
+        );
+      });
     }
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
-    if (!kIsWeb) _betterPlayerController?.dispose();
+    _betterPlayerController?.dispose();
     super.dispose();
   }
 
@@ -290,20 +384,16 @@ class _PlayerState extends State<Player> {
         },
         child: Scaffold(
           backgroundColor: Colors.black,
+          resizeToAvoidBottomInset: false,
           body: SafeArea(
             child: Stack(
               children: [
                 // ── Player ──
                 Positioned.fill(
                   child: Center(
-                    child: kIsWeb
-                        ? const Text(
-                            "Reproductor nativo/DRM no soportado en Web.",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          )
-                        : BetterPlayer(
-                            controller: _betterPlayerController!,
-                          ),
+                    child: BetterPlayer(
+                      controller: _betterPlayerController!,
+                    ),
                   ),
                 ),
 

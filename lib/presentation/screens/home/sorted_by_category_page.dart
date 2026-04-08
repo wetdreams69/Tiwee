@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:lottie/lottie.dart';
@@ -36,9 +35,7 @@ class _SortedByCategoryPageState extends State<SortedByCategoryPage> {
               ? Center(
                   child: SizedBox(
                       width: size.width / 3,
-                      child: kIsWeb
-                          ? const CircularProgressIndicator()
-                          : Lottie.asset(
+                      child: Lottie.asset(
                               kNotFound,
                               width: 100,
                             )))
@@ -88,9 +85,7 @@ class _SortedByCategoryPageState extends State<SortedByCategoryPage> {
                                  placeholder: (context, url) => Center(
                                     child: SizedBox(
                                         width: 50,
-                                        child: kIsWeb
-                                            ? const CircularProgressIndicator()
-                                            : Lottie.asset(kLoading,
+                                        child: Lottie.asset(kLoading,
                                                 width: 60))),
                                 imageUrl: widget.channels[currentIndex].logo,
                                 // progressIndicatorBuilder: (context, url, progress) => ProgressIndicator(value: progress.progress,),
@@ -119,12 +114,12 @@ class _SortedByCategoryPageState extends State<SortedByCategoryPage> {
                                             onPressed: () => Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (context) => Player(
-                                                        url: widget.channels[index].url,
-                                                        clearKey: widget.channels[index].clearkey,
-                                                        channels: widget.channels,
-                                                        initialIndex: index,
-                                                    ))),
+                                                            builder: (context) => Player(
+                                                                channels:
+                                                                    widget.channels,
+                                                                initialIndex:
+                                                                    index,
+                                                            ))),
                                             child: Container(
                                                 width: double.infinity,
                                                 height: 60,

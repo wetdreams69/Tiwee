@@ -1,5 +1,4 @@
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -44,16 +43,24 @@ class CountryChannels extends ConsumerWidget {
 
                 children: List.generate(data[country]!.length, (index) {
                   return DpadFocusable(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Player(url: data[country]![index].url, clearKey: data[country]![index].clearkey, channels: data[country]!, initialIndex: index))),
-                    child: TvCard(size: size, index: index, data: data, ref: ref, country: country)
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Player(
+                                channels: data[country]!,
+                                initialIndex: index))),
+                    child: TvCard(
+                        size: size,
+                        index: index,
+                        data: data,
+                        ref: ref,
+                        country: country),
                   );
                 }),
               )),
             ),
             error: (error, stackTrace) => Text(error.toString()),
-            loading: () => kIsWeb
-                ? const Center(child: CircularProgressIndicator())
-                : SizedBox(width: 50, child: Lottie.asset(kLoading, width: 60)),
+            loading: () => SizedBox(width: 50, child: Lottie.asset(kLoading, width: 60)),
           ),
         ],
       )),

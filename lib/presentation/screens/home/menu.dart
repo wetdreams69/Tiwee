@@ -1,5 +1,4 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -115,9 +114,7 @@ class Menu extends ConsumerWidget {
                     error: (error, stackTrace) => Center(
                       child: Text(error.toString()),
                     ),
-                    loading: () => kIsWeb
-                        ? const Center(child: CircularProgressIndicator())
-                        : Lottie.asset(kLoading, width: size.width / 4),
+                    loading: () => Lottie.asset(kLoading, width: size.width / 4),
                   ),
                 ),
                 const SizedBox(

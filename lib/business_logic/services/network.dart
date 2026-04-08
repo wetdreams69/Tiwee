@@ -20,16 +20,29 @@ Future<List<ChannelObj>?> fetchChannels() async {
     for (var channel in responseData) {
       ChannelObj channelObj = ChannelObj.fromJson(channel);
 
+      // Si no tiene países pero la categoría es un país conocido, lo agregamos
+      if (channelObj.countries.isEmpty) {
+        for (var cat in channelObj.categories) {
+          if (cat.name == "Argentina") {
+            channelObj.countries.add(Country(name: "Argentina", code: "ar"));
+          } else if (cat.name == "Uruguay") {
+            channelObj.countries.add(Country(name: "Uruguay", code: "uy"));
+          } else if (cat.name == "Paraguay") {
+            channelObj.countries.add(Country(name: "Paraguay", code: "py"));
+          }
+        }
+      }
+
       if (channelObj.categories.isNotEmpty) {
         if (channelObj.categories[0].name != "XXX") {
           channels.add(channelObj);
-
         }
       }
     }
     print("salmm");
+    
+    if (channels.isEmpty) return [];
 
-    print(channels[0].countries[0].name);
     List<ChannelObj> repairChannels = channels.toSet().toList();
 
     return repairChannels;

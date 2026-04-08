@@ -6,6 +6,7 @@ import 'package:tiwee/business_logic/provider/category_provider.dart';
 import 'package:tiwee/business_logic/provider/country_code.dart';
 import 'package:tiwee/business_logic/provider/country_provider.dart';
 import 'package:tiwee/presentation/screens/home/country_channels.dart';
+import 'package:tiwee/presentation/screens/home/sorted_by_category_page.dart';
 import 'package:tiwee/presentation/widgets/main_appbar.dart';
 import 'package:tiwee/presentation/widgets/sorted_by_category_widget/fav_all_card.dart';
 
@@ -166,10 +167,21 @@ class SortedByCountryPage extends ConsumerWidget {
                                 icon: FontAwesomeIcons.star,
                                 count: 25,
                               ),
-                              FavAllCard(
-                                text: "All",
-                                icon: FontAwesomeIcons.tv,
-                                count: allChanellsCount,
+                              GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SortedByCategoryPage(
+                                      categoryName: "Live Tv",
+                                      channels: data["Live Tv"] ?? [],
+                                    ),
+                                  ),
+                                ),
+                                child: FavAllCard(
+                                  text: "All",
+                                  icon: FontAwesomeIcons.tv,
+                                  count: allChanellsCount,
+                                ),
                               ),
                             ],
                           ),
