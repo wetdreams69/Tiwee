@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tiwee/business_logic/provider/languageProvider.dart';
+import 'package:tiwee/business_logic/provider/language_provider.dart';
 import 'package:tiwee/core/consts.dart';
 import 'package:tiwee/presentation/screens/home/language_list.dart';
 import 'package:lottie/lottie.dart';
@@ -17,7 +17,6 @@ class Language extends ConsumerWidget {
         body: country.when(
       data: (data) {
         kLanguages.sort((a, b) => a.toString().compareTo(b.toString()));
-        print(data);
         return ListView.builder(
           itemCount: data.length,
           itemBuilder: (context, index) => GestureDetector(

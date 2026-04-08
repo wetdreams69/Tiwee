@@ -8,7 +8,7 @@ import 'package:tiwee/business_logic/provider/channel_card_provider.dart';
 import 'package:tiwee/core/consts.dart';
 
 import 'package:tiwee/presentation/screens/home/sorted_by_category_page.dart';
-import 'package:tiwee/presentation/screens/home/sorted_by_countryPage.dart';
+import 'package:tiwee/presentation/screens/home/sorted_by_country_page.dart';
 import 'package:tiwee/presentation/widgets/home_page_widget/big_card_channel.dart';
 import 'package:tiwee/presentation/widgets/main_appbar.dart';
 import 'package:tiwee/presentation/widgets/dpad_focusable.dart';

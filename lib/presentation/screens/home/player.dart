@@ -31,7 +31,6 @@ class _PlayerState extends State<Player> {
   List<Map<String, dynamic>> _audioTracks = [];
   List<Map<String, dynamic>> _subtitleTracks = [];
 
-  // ── Subtítulos overlay ──
   String _currentSubtitle = '';
   bool _subtitlesActive = false;
 
@@ -82,7 +81,6 @@ class _PlayerState extends State<Player> {
       if (channel.streams.isNotEmpty) {
         final stream = channel.streams[_currentStreamIndex];
         
-        // Resolvemos redirección para cualquier URL
         String finalUrl = await _resolveUrl(stream.url, stream.headers);
 
         _betterPlayerController!.setupDataSource(
@@ -91,7 +89,6 @@ class _PlayerState extends State<Player> {
       }
     }
 
-    // Handler para recibir cues desde Kotlin
     const channel = MethodChannel('com.example.tiwee/tracks');
     channel.setMethodCallHandler((call) async {
       if (call.method == 'onSubtitleCue') {
@@ -122,7 +119,6 @@ class _PlayerState extends State<Player> {
       final nextStream = channel.streams[_currentStreamIndex];
       
       _resolveUrl(nextStream.url, nextStream.headers).then((finalUrl) {
-        // Mostrar aviso al usuario
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Error en stream ${_currentStreamIndex}. Intentando fallback..."),
@@ -211,7 +207,6 @@ class _PlayerState extends State<Player> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Opción desactivar
               ListTile(
                 title: Text(
                   "Desactivar",
@@ -229,7 +224,6 @@ class _PlayerState extends State<Player> {
                   Navigator.pop(ctx);
                 },
               ),
-              // Pistas disponibles
               ..._subtitleTracks.map((e) {
                 final isSelected = e['selected'] == true;
                 return ListTile(
@@ -340,8 +334,7 @@ class _PlayerState extends State<Player> {
     if (_channels.isEmpty || newIndex < 0 || newIndex >= _channels.length) return;
     setState(() {
       _currentIndex = newIndex;
-      _currentStreamIndex = 0; // Reset stream index for new channel
-      // Limpiamos subtítulos al cambiar canal
+      _currentStreamIndex = 0;
       _subtitlesActive = false;
       _currentSubtitle = '';
     });
@@ -388,7 +381,6 @@ class _PlayerState extends State<Player> {
           body: SafeArea(
             child: Stack(
               children: [
-                // ── Player ──
                 Positioned.fill(
                   child: Center(
                     child: BetterPlayer(
@@ -397,7 +389,6 @@ class _PlayerState extends State<Player> {
                   ),
                 ),
 
-                // ── Overlay de subtítulos ──
                 if (_subtitlesActive && _currentSubtitle.isNotEmpty)
                   Positioned(
                     bottom: 60,

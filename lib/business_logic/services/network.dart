@@ -9,8 +9,6 @@ Future<List<ChannelObj>?> fetchChannels() async {
   try {
     Response response =
         await Dio().get(kPlaylistUrl);
-    print("enzo");
-    print(response.toString());
 
     var responseData = response.data;
     if (responseData is String) {
@@ -39,7 +37,6 @@ Future<List<ChannelObj>?> fetchChannels() async {
         }
       }
     }
-    print("salmm");
     
     if (channels.isEmpty) return [];
 
