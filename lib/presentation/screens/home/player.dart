@@ -147,8 +147,11 @@ class _PlayerState extends State<Player> {
 
   Future<void> _loadNativeTracks() async {
     if (_betterPlayerController == null) return;
+    
     final audios = await _betterPlayerController!.getNativeAudioTracks();
     final subs = await _betterPlayerController!.getNativeSubtitleTracks();
+    
+    
     if (mounted) {
       setState(() {
         _audioTracks = audios;
@@ -157,7 +160,17 @@ class _PlayerState extends State<Player> {
     }
   }
 
-  void _showAudioDialog() {
+  void _showAudioDialog() async {
+    await _loadNativeTracks();
+    if (!mounted) return;
+    
+    if (_audioTracks.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No se encontraron pistas de audio todavía.")),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (ctx) {
@@ -194,7 +207,10 @@ class _PlayerState extends State<Player> {
     );
   }
 
-  void _showSubtitleDialog() {
+  void _showSubtitleDialog() async {
+    await _loadNativeTracks();
+    if (!mounted) return;
+
     showDialog(
       context: context,
       builder: (ctx) {
