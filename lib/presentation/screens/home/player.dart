@@ -39,6 +39,13 @@ class _PlayerState extends State<Player> {
     super.initState();
     _currentIndex = widget.initialIndex;
     _channels = widget.channels;
+    
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    
     _setupPlayer();
   }
 
@@ -134,7 +141,6 @@ class _PlayerState extends State<Player> {
         );
       });
     } else {
-      // Si ya no hay más streams, avisar del error definitivo
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("No se pudo cargar ningún stream para este canal."),
@@ -367,6 +373,14 @@ class _PlayerState extends State<Player> {
 
   @override
   void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    
     _focusNode.dispose();
     _betterPlayerController?.dispose();
     super.dispose();
@@ -394,42 +408,46 @@ class _PlayerState extends State<Player> {
         child: Scaffold(
           backgroundColor: Colors.black,
           resizeToAvoidBottomInset: false,
-          body: SafeArea(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Center(
-                    child: BetterPlayer(
-                      controller: _betterPlayerController!,
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: Center(
+                  child: BetterPlayer(
+                    controller: _betterPlayerController!,
+                  ),
+                ),
+              ),
+              if (_subtitlesActive && _currentSubtitle.isNotEmpty)
+                Positioned(
+                  bottom: 40,
+                  left: 20,
+                  right: 20,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 4),
+                    decoration: const BoxDecoration(
+                      color: Colors.transparent,
+                    ),
+                    child: Text(
+                      _currentSubtitle,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
+                        fontFamily: 'Arial Black',
+                        height: 1.2,
+                        shadows: [
+                          Shadow(offset: Offset(-1.5, -1.5), color: Colors.black),
+                          Shadow(offset: Offset(1.5, -1.5), color: Colors.black),
+                          Shadow(offset: Offset(1.5, 1.5), color: Colors.black),
+                          Shadow(offset: Offset(-1.5, 1.5), color: Colors.black),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-
-                if (_subtitlesActive && _currentSubtitle.isNotEmpty)
-                  Positioned(
-                    bottom: 60,
-                    left: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        _currentSubtitle,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
